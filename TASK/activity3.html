@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .content {
+            display: flex;
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .form-section, .schedule-section {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .btn-submit {
+            width: 100%;
+        }
+
+        .btn-delete {
+            background-color: #f44336;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background-color: #da190b;
+        }
+
+        .appointments-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .appointment-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .appointment-details {
+            flex: 1;
+        }
+
+        .appointment-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .appointment-date-time {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Appointment Management System</h1>
+
+        <div class="content">
+            <!-- Form Section -->
+            <div class="form-section">
+                <h2>Add New Appointment</h2>
+                <form id="appointmentForm">
+                    <div class="form-group">
+                        <label for="appointmentName">Patient Name</label>
+                        <input 
+                            type="text" 
+                            id="appointmentName" 
+                            placeholder="Enter patient name" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointmentDate">Appointment Date</label>
+                        <input 
+                            type="date" 
+                            id="appointmentDate" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointmentTime">Appointment Time</label>
+                        <input 
+                            type="time" 
+                            id="appointmentTime" 
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-submit">Add Appointment</button>
+                </form>
+            </div>
+
+            <!-- Schedule Section -->
+            <div class="schedule-section">
+                <h2>Scheduled Appointments</h2>
+                <div class="appointments-list" id="appointmentsList">
+                    <div class="empty-message">
+                        <p>No appointments scheduled yet. Add one to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const appointmentForm = document.getElementById('appointmentForm');
+        const nameInput = document.getElementById('appointmentName');
+        const dateInput = document.getElementById('appointmentDate');
+        const timeInput = document.getElementById('appointmentTime');
+        const appointmentsList = document.getElementById('appointmentsList');
+
+        // Array to store appointments
+        let appointments = [];
+
+        // Event listener for form submission
+        appointmentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get form values
+            const name = nameInput.value.trim();
+            const date = dateInput.value;
+            const time = timeInput.value;
+
+            // Validation
+            if (!name || !date || !time) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            // Create appointment object
+            const appointment = {
+                id: Date.now(), // Unique ID based on timestamp
+                name: name,
+                date: date,
+                time: time
+            };
+
+            // Add to appointments array
+            appointments.push(appointment);
+
+            // Clear form inputs
+            nameInput.value = '';
+            dateInput.value = '';
+            timeInput.value = '';
+
+            // Render updated appointments list
+            renderAppointments();
+
+            // Set focus back to name input
+            nameInput.focus();
+        });
+
+        // Function to render appointments
+        function renderAppointments() {
+            // Clear the list
+            appointmentsList.innerHTML = '';
+
+            // If no appointments, show empty message
+            if (appointments.length === 0) {
+                appointmentsList.innerHTML = `
+                    <div class="empty-message">
+                        <p>No appointments scheduled yet. Add one to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Create appointment items
+            appointments.forEach(appointment => {
+                const appointmentItem = document.createElement('div');
+                appointmentItem.className = 'appointment-item';
+
+                // Format date for display
+                const dateObj = new Date(appointment.date);
+                const formattedDate = dateObj.toLocaleDateString('en-US', {
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                });
+
+                // Format time for display
+                const [hours, minutes] = appointment.time.split(':');
+                const formattedTime = new Date(2000, 0, 1, hours, minutes).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+
+                appointmentItem.innerHTML = `
+                    <div class="appointment-details">
+                        <div class="appointment-name">${appointment.name}</div>
+                        <div class="appointment-date-time">
+                            <div class="date-item">
+                                <span>Date:</span>
+                                <span>${formattedDate}</span>
+                            </div>
+                            <div class="time-item">
+                                <span>Time:</span>
+                                <span>${formattedTime}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn-delete" data-id="${appointment.id}">Delete</button>
+                `;
+
+                appointmentsList.appendChild(appointmentItem);
+            });
+
+            // Add event listeners to delete buttons using event delegation
+            const deleteButtons = appointmentsList.querySelectorAll('.btn-delete');
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const appointmentId = parseInt(this.getAttribute('data-id'));
+                    deleteAppointment(appointmentId);
+                });
+            });
+        }
+
+        // Function to delete an appointment
+        function deleteAppointment(id) {
+            // Confirm deletion
+            if (confirm('Are you sure you want to delete this appointment?')) {
+                // Remove from array
+                appointments = appointments.filter(appointment => appointment.id !== id);
+
+                // Re-render the list
+                renderAppointments();
+            }
+        }
+
+        // Set minimum date to today
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    </script>
+</body>
+</html>

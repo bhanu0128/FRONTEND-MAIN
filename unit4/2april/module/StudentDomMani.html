@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Registration Form</title>
+</head>
+<body>
+    <h2>Student Registration Form</h2>
+    <form id="studentForm">
+        registration number: <input type="text" id="regNo"><br><br>
+        name: <input type="text" id="name"><br><br>
+        section: <input type="text" id="section"><br><br>
+        <button type="button" onclick="registerStudent()">Add Student</button>
+    </form>
+    <h3> Student List:</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Registration Number</th>
+                <th>Name</th>
+                <th>Section</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="studentTable"></tbody>
+            
+    </table>
+</body>
+</html>
