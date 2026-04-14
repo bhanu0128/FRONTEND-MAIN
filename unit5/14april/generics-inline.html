@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript Generics</title>
+</head>
+<body>
+    <h2>typescript generics</h2>
+    <p id="output"></p>
+    
+    <script>
+        function identity(value) {
+            return value;
+        }
+        
+        let numResult = identity(42);
+        let strResult = identity("Hello, TypeScript!");
+        
+        let result = `
+Number value: ${numResult} <br>
+String value: ${strResult}`;
+        
+        document.getElementById("output").innerHTML = result;
+    </script>
+</body>
+</html>
